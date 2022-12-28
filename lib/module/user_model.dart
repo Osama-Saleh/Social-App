@@ -7,6 +7,9 @@ class UserModel {
   String? password;
   String? phone;
   String? id;
+  String? image;
+  String? cover;
+  String? bio;
   bool? isVerification;
 
   UserModel({
@@ -15,6 +18,9 @@ class UserModel {
     this.password,
     this.phone,
     this.id,
+    this.image,
+    this.cover,
+    this.bio,
     this.isVerification,
   });
 
@@ -25,6 +31,9 @@ class UserModel {
       'password': password,
       'phone': phone,
       'id': id,
+      'image': image,
+      'cover': cover,
+      'bio': bio,
       'isVerification ': isVerification,
     };
   }
@@ -36,6 +45,9 @@ class UserModel {
       password: json['password'] != null ? json['password'] as String : null,
       phone: json['phone'] != null ? json['phone'] as String : null,
       id: json['id'] != null ? json['id'] as String : null,
+      image: json['image'] != null ? json['image'] as String : null,
+      cover: json['cover'] != null ? json['cover'] as String : null,
+      bio: json['bio'] != null ? json['bio'] as String : null,
       isVerification: json['isVerification'] != null
           ? json['isVerification'] as bool
           : null,

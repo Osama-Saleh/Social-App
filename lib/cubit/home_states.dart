@@ -29,3 +29,5 @@ class GetUserLoadingState extends HomeStates {}
 class GetUserSuccessState extends HomeStates {}
 
 class GetUserErrorState extends HomeStates {}
+
+class ChangeBottomNavigatBarState extends HomeStates {}

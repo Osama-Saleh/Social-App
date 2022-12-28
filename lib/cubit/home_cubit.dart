@@ -1,4 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:chat_app/Screens/chat_screen.dart';
+import 'package:chat_app/Screens/feed_screen.dart';
+import 'package:chat_app/Screens/home_screen.dart';
+import 'package:chat_app/Screens/setting_screen.dart';
+import 'package:chat_app/Screens/user_screen.dart';
 import 'package:chat_app/cash_helper/shared_preference.dart';
 import 'package:chat_app/components/component.dart';
 import 'package:chat_app/cubit/home_states.dart';
@@ -109,20 +114,39 @@ class HomeCubit extends Cubit<HomeStates> {
     });
   }
 
-  UserModel? model;
+  UserModel? userModel;
   void getUserData() {
     emit(GetUserLoadingState());
     FirebaseFirestore.instance.collection("User").doc(uid).get().then((value) {
-      model = UserModel.fromJson(value.data()!);
-      print("isVerification ${model!.isVerification}");
-      model!.isVerification = true;
-      print("getUserData ${model!.email}");
-      print("isVerification ${model!.isVerification}");
+      userModel = UserModel.fromJson(value.data()!);
+      print("isVerification ${userModel!.isVerification}");
+      userModel!.isVerification = true;
+      print("getUserData ${userModel!.email}");
+      print("isVerification ${userModel!.isVerification}");
       emit(GetUserSuccessState());
       // print("getUserData ${model}");
     }).catchError((Error) {
       print("ErrorgetUserData ${Error.toString()}");
       emit(GetUserErrorState());
     });
+  }
+
+  int currentIndex = 0;
+  List<Widget> screensButtomNavigate = [
+    FeedScreen(),
+    UserScreen(),
+    ChatsScreen(),
+    SettingScreen(),
+  ];
+  List<String>  titels = [
+    "Home",
+    "Users",
+    "Chats",
+    "Setting",
+  ];
+
+  void changebottomNavigatBar(int index) {
+    currentIndex = index;
+    emit(ChangeBottomNavigatBarState());
   }
 }
