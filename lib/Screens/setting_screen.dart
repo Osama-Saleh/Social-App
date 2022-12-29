@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:ffi';
-
 import 'package:chat_app/components/component.dart';
 import 'package:chat_app/cubit/home_cubit.dart';
 import 'package:chat_app/cubit/home_states.dart';
@@ -16,10 +14,14 @@ class SettingScreen extends StatelessWidget {
   var formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    var coverImage = HomeCubit.get(context).coverImage;
+    var profileImage = HomeCubit.get(context).profileImage;
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {},
       builder: (context, state) {
         var model = HomeCubit.get(context).userModel;
+        bioController.text = HomeCubit.get(context).userModel!.bio!;
+        nameController.text = HomeCubit.get(context).userModel!.name!;
         return SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -43,7 +45,11 @@ class SettingScreen extends StatelessWidget {
                                     topLeft: Radius.circular(5),
                                     topRight: Radius.circular(5)),
                                 image: DecorationImage(
-                                  image: NetworkImage("${model!.cover}"),
+                                  image:
+                                      HomeCubit.get(context).coverImage == null
+                                          ? NetworkImage("${model!.cover}")
+                                          : FileImage(HomeCubit.get(context)
+                                              .coverImage!) as ImageProvider,
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -53,7 +59,9 @@ class SettingScreen extends StatelessWidget {
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    HomeCubit.get(context).getCoverImage();
+                                  },
                                   icon: Icon(Icons.camera_alt),
                                 ),
                               ),
@@ -71,14 +79,20 @@ class SettingScreen extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 43,
                                   backgroundImage:
-                                      NetworkImage("${model.image}"),
+                                      HomeCubit.get(context).profileImage ==
+                                              null
+                                          ? NetworkImage("${model!.image}")
+                                          : FileImage(HomeCubit.get(context)
+                                              .profileImage!) as ImageProvider,
                                   child: Align(
                                     alignment: AlignmentDirectional.bottomEnd,
                                     child: CircleAvatar(
-                                      // backgroundColor: Colors.green,
                                       radius: 18,
                                       child: IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          HomeCubit.get(context)
+                                              .getProfileImage();
+                                        },
                                         icon: Icon(
                                           Icons.camera_alt,
                                           size: 18,
@@ -98,7 +112,7 @@ class SettingScreen extends StatelessWidget {
                     height: 5,
                   ),
                   Text(
-                    "Osama Saleh",
+                    nameController.text,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   Row(
@@ -106,7 +120,7 @@ class SettingScreen extends StatelessWidget {
                     children: [
                       Expanded(flex: 1, child: Container()),
                       Expanded(
-                          flex: 4, child: Center(child: Text("${model.bio}"))),
+                          flex: 4, child: Center(child: Text("${model!.bio}"))),
                       Expanded(
                         child: OutlinedButton(
                             onPressed: (() {

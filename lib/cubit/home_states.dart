@@ -30,4 +30,16 @@ class GetUserSuccessState extends HomeStates {}
 
 class GetUserErrorState extends HomeStates {}
 
+class ProfileImageLoadingState extends HomeStates {}
+
+class ProfileImageSuccessState extends HomeStates {}
+
+class ProfileImageErrorState extends HomeStates {}
+
+class CoverImageLoadingState extends HomeStates {}
+
+class CoverImageSuccessState extends HomeStates {}
+
+class CoverImageErrorState extends HomeStates {}
+
 class ChangeBottomNavigatBarState extends HomeStates {}

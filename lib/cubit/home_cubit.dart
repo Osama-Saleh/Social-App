@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:chat_app/Screens/feed_screen.dart';
@@ -11,10 +13,13 @@ import 'package:chat_app/module/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:images_picker/images_picker.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(HomeInitState());
@@ -138,7 +143,7 @@ class HomeCubit extends Cubit<HomeStates> {
     ChatsScreen(),
     SettingScreen(),
   ];
-  List<String>  titels = [
+  List<String> titels = [
     "Home",
     "Users",
     "Chats",
@@ -148,5 +153,72 @@ class HomeCubit extends Cubit<HomeStates> {
   void changebottomNavigatBar(int index) {
     currentIndex = index;
     emit(ChangeBottomNavigatBarState());
+  }
+
+  File? coverImage;
+  ImagePicker picker = ImagePicker();
+
+  Future getCoverImage() async {
+    emit(CoverImageLoadingState());
+    print("CoverImageLoadingState");
+    final imagefile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (imagefile != null) {
+      coverImage = File(imagefile.path);
+      emit(CoverImageSuccessState());
+    } else {
+      print("Not Image Selected");
+      emit(CoverImageErrorState());
+    }
+    //take Photo From Camera
+//     List<Media>? res = await ImagesPicker.pick(
+//       count: 3,
+//       pickType: PickType.image,
+//     );
+// // Media
+// // .path
+// // .thumbPath (path for video thumb)
+// // .size (kb)
+  }
+
+  File? profileImage;
+  ImagePicker coverpicker = ImagePicker();
+
+  Future getProfileImage() async {
+    emit(ProfileImageLoadingState());
+    print("ProfileImageLoadingState");
+    final imagefile = await coverpicker.pickImage(source: ImageSource.gallery);
+
+    if (imagefile != null) {
+      profileImage = File(imagefile.path);
+      print("image Path is : ${profileImage}");
+      uploadProfileImage();
+      emit(ProfileImageSuccessState());
+    } else {
+      print("Not Image Selected");
+      emit(ProfileImageErrorState());
+    }
+  }
+
+  String? profileImageurl;
+  Future<void> uploadProfileImage() async {
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child("images/${Uri.file(profileImage!.path).pathSegments.last}")
+        .putFile(profileImage!)
+        .then((value) {
+      print("${value}");
+      value.ref.getDownloadURL().then((value) {
+        print("getDownloadURLSuccess");
+
+        print(value);
+        profileImageurl = value;
+        print(value);
+      }).catchError((Error) {
+        print("getDownloadURLError ${Error}");
+      });
+    }).catchError((Error) {
+      print("uploadProfileImage ${Error}");
+    });
   }
 }
