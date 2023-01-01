@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        label: "Name",
+                        label: Text("Name"),
                         prefixIcon: Icon(Icons.person),
                         keyboardType: TextInputType.name,
                       ),
@@ -84,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        label: "Email",
+                        label: Text("Email"),
                         prefixIcon: Icon(Icons.mail_outline),
                         keyboardType: TextInputType.emailAddress,
                       ),
@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             if (fromKey.currentState!.validate()) {}
                           },
                           obscureText: isSecret,
-                          label: "Password",
+                          label: Text("Password"),
                           suffixIcon: IconButton(
                               onPressed: () {
                                 setState(() {
@@ -129,7 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           return null;
                         },
-                        label: "Phone",
+                        label: Text("Phone"),
                         prefixIcon: Icon(Icons.phone),
                         keyboardType: TextInputType.number,
                       ),

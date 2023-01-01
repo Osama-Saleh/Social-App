@@ -10,18 +10,20 @@ class SettingScreen extends StatelessWidget {
   SettingScreen({super.key});
   var bioController = TextEditingController();
   var nameController = TextEditingController();
+  var phoneController = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     var coverImage = HomeCubit.get(context).coverImage;
     var profileImage = HomeCubit.get(context).profileImage;
+
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {},
       builder: (context, state) {
         var model = HomeCubit.get(context).userModel;
-        bioController.text = HomeCubit.get(context).userModel!.bio!;
-        nameController.text = HomeCubit.get(context).userModel!.name!;
+        bioController.text = model!.bio!;
+        nameController.text = model.name!;
         return SingleChildScrollView(
           child: Form(
             key: formKey,
@@ -46,8 +48,9 @@ class SettingScreen extends StatelessWidget {
                                     topRight: Radius.circular(5)),
                                 image: DecorationImage(
                                   image:
-                                      HomeCubit.get(context).coverImage == null
-                                          ? NetworkImage("${model!.cover}")
+                                      HomeCubit.get(context).userModel!.cover ==
+                                              null
+                                          ? AssetImage("assets/chat1.png")
                                           : FileImage(HomeCubit.get(context)
                                               .coverImage!) as ImageProvider,
                                   fit: BoxFit.fill,
@@ -60,7 +63,10 @@ class SettingScreen extends StatelessWidget {
                                 backgroundColor: Colors.white,
                                 child: IconButton(
                                   onPressed: () {
-                                    HomeCubit.get(context).getCoverImage();
+                                    HomeCubit.get(context).getCoverImage(
+                                        name: nameController.text,
+                                        bio: bioController.text,
+                                        phone: phoneController.text);
                                   },
                                   icon: Icon(Icons.camera_alt),
                                 ),
@@ -79,9 +85,9 @@ class SettingScreen extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 43,
                                   backgroundImage:
-                                      HomeCubit.get(context).profileImage ==
+                                      HomeCubit.get(context).userModel!.image ==
                                               null
-                                          ? NetworkImage("${model!.image}")
+                                          ? AssetImage("assets/chat1.png")
                                           : FileImage(HomeCubit.get(context)
                                               .profileImage!) as ImageProvider,
                                   child: Align(
@@ -91,7 +97,11 @@ class SettingScreen extends StatelessWidget {
                                       child: IconButton(
                                         onPressed: () {
                                           HomeCubit.get(context)
-                                              .getProfileImage();
+                                              .getProfileImage(
+                                            bio: bioController.text,
+                                            name: nameController.text,
+                                            phone: phoneController.text,
+                                          );
                                         },
                                         icon: Icon(
                                           Icons.camera_alt,
@@ -120,7 +130,7 @@ class SettingScreen extends StatelessWidget {
                     children: [
                       Expanded(flex: 1, child: Container()),
                       Expanded(
-                          flex: 4, child: Center(child: Text("${model!.bio}"))),
+                          flex: 4, child: Center(child: Text("${model.bio}"))),
                       Expanded(
                         child: OutlinedButton(
                             onPressed: (() {
@@ -137,7 +147,7 @@ class SettingScreen extends StatelessWidget {
                                         children: [
                                           myTextFormField(
                                             controller: nameController,
-                                            label: "name",
+                                            label: Text("name"),
                                             prefixIcon: Icon(Icons.person),
                                             keyboardType: TextInputType.name,
                                           ),
@@ -146,7 +156,16 @@ class SettingScreen extends StatelessWidget {
                                           ),
                                           myTextFormField(
                                             controller: bioController,
-                                            label: "Write Your bio",
+                                            label: Text("Write Your bio"),
+                                            prefixIcon: Icon(Icons.book),
+                                            keyboardType: TextInputType.name,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          myTextFormField(
+                                            controller: phoneController,
+                                            label: Text("Phone"),
                                             prefixIcon: Icon(Icons.book),
                                             keyboardType: TextInputType.name,
                                           ),
@@ -156,6 +175,13 @@ class SettingScreen extends StatelessWidget {
                                                 bottom: 20),
                                             child: ElevatedButton(
                                               onPressed: () {
+                                                HomeCubit.get(context)
+                                                    .UpdateUserData(
+                                                        name:
+                                                            nameController.text,
+                                                        bio: bioController.text,
+                                                        phone: phoneController
+                                                            .text);
                                                 Navigator.pop(context);
                                               },
                                               child: Text(

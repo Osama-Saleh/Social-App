@@ -4,11 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:chat_app/Screens/chat_screen.dart';
 import 'package:chat_app/Screens/feed_screen.dart';
 import 'package:chat_app/Screens/home_screen.dart';
+import 'package:chat_app/Screens/postscreen.dart';
 import 'package:chat_app/Screens/setting_screen.dart';
 import 'package:chat_app/Screens/user_screen.dart';
 import 'package:chat_app/cash_helper/shared_preference.dart';
 import 'package:chat_app/components/component.dart';
 import 'package:chat_app/cubit/home_states.dart';
+import 'package:chat_app/module/post_model.dart';
 import 'package:chat_app/module/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +37,7 @@ class HomeCubit extends Cubit<HomeStates> {
     @required String? phone,
   }) async {
     emit(RegisterLoadingDataState());
-    print("RegisterLoadingDataState");
+    // print("RegisterLoadingDataState");
     try {
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -43,27 +45,27 @@ class HomeCubit extends Cubit<HomeStates> {
         password: password!,
       )
           .then((value) {
-        print(value.user!.email);
+        // print(value.user!.email);
         creatUserData(
             name: name,
             email: email,
             password: password,
             phone: phone,
             id: value.user!.uid);
-        print("RegisterSuccessDataState");
+        // print("RegisterSuccessDataState");
         emit(RegisterSuccessDataState());
       }).catchError((Error) {
-        print("RegisterErrorDataState ${Error}");
+        // print("RegisterErrorDataState ${Error}");
         emit(RegisterErrorDataState());
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        // print('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        // print('The account already exists for that email.');
       }
     } catch (e) {
-      print("Catch Error ${e}");
+      // print("Catch Error ${e}");
     }
   }
 
@@ -72,25 +74,25 @@ class HomeCubit extends Cubit<HomeStates> {
     @required String? password,
   ) async {
     emit(LoginLoadingDataState());
-    print("LoginLoadingDataState");
+    // print("LoginLoadingDataState");
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email!, password: password!)
           .then((value) {
-        print("${value.user!.email}");
-        print("${value.user!.uid}");
+        // print("${value.user!.email}");
+        // print("${value.user!.uid}");
 
-        print("LoginSuccessDataState");
+        // print("LoginSuccessDataState");
         emit(LoginSuccessDataState(value.user!.uid));
       }).catchError((Error) {
         emit(LoginErrorDataState());
-        print("getLoginErrorState ${Error}");
+        // print("getLoginErrorState ${Error}");
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        // print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        // print('Wrong password provided for that user.');
       }
     }
   }
@@ -102,7 +104,7 @@ class HomeCubit extends Cubit<HomeStates> {
     @required String? phone,
     @required String? id,
   }) {
-    print("CreatUserLoadingState");
+    // print("CreatUserLoadingState");
     emit(CreatUserLoadingState());
     UserModel userModel = UserModel(
         email: email, name: name, password: password, phone: phone, id: id);
@@ -111,10 +113,10 @@ class HomeCubit extends Cubit<HomeStates> {
         .doc(id)
         .set(userModel.toMap())
         .then((value) {
-      print("CreatUserSuccessState");
+      // print("CreatUserSuccessState");
       emit(CreatUserSuccessState());
     }).catchError((Error) {
-      print("creatUserDataError..${Error}");
+      // print("creatUserDataError..${Error}");
       emit(CreatUserErrorState());
     });
   }
@@ -124,14 +126,16 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(GetUserLoadingState());
     FirebaseFirestore.instance.collection("User").doc(uid).get().then((value) {
       userModel = UserModel.fromJson(value.data()!);
-      print("isVerification ${userModel!.isVerification}");
+      // print("isVerification ${userModel!.isVerification}");
       userModel!.isVerification = true;
-      print("getUserData ${userModel!.email}");
-      print("isVerification ${userModel!.isVerification}");
+      // print("getUserData ${userModel!.name}");
+      // print("getUserData ${userModel!.bio}");
+      // print("getUserData ${userModel!.email}");
+      // print("isVerification ${userModel!.isVerification}");
       emit(GetUserSuccessState());
       // print("getUserData ${model}");
     }).catchError((Error) {
-      print("ErrorgetUserData ${Error.toString()}");
+      // print("ErrorgetUserData ${Error.toString()}");
       emit(GetUserErrorState());
     });
   }
@@ -140,34 +144,45 @@ class HomeCubit extends Cubit<HomeStates> {
   List<Widget> screensButtomNavigate = [
     FeedScreen(),
     UserScreen(),
+    PostScreen(),
     ChatsScreen(),
     SettingScreen(),
   ];
   List<String> titels = [
     "Home",
     "Users",
+    "Poste",
     "Chats",
     "Setting",
   ];
 
-  void changebottomNavigatBar(int index) {
-    currentIndex = index;
-    emit(ChangeBottomNavigatBarState());
+  void changebottomNavigatBar(int index, context) {
+    if (index == 2) {
+      emit(CreatePostState());
+    } else {
+      currentIndex = index;
+      emit(ChangeBottomNavigatBarState());
+    }
   }
 
   File? coverImage;
   ImagePicker picker = ImagePicker();
 
-  Future getCoverImage() async {
+  Future getCoverImage({
+    @required String? name,
+    @required String? bio,
+    @required String? phone,
+  }) async {
     emit(CoverImageLoadingState());
-    print("CoverImageLoadingState");
+    // print("CoverImageLoadingState");
     final imagefile = await picker.pickImage(source: ImageSource.gallery);
 
     if (imagefile != null) {
       coverImage = File(imagefile.path);
+      uploadCoverImage(name: name, bio: bio, phone: phone);
       emit(CoverImageSuccessState());
     } else {
-      print("Not Image Selected");
+      // print("Not Image Selected");
       emit(CoverImageErrorState());
     }
     //take Photo From Camera
@@ -182,43 +197,230 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   File? profileImage;
-  ImagePicker coverpicker = ImagePicker();
+  ImagePicker profilepicker = ImagePicker();
 
-  Future getProfileImage() async {
+  Future getProfileImage({
+    @required String? name,
+    @required String? bio,
+    @required String? phone,
+  }) async {
     emit(ProfileImageLoadingState());
-    print("ProfileImageLoadingState");
-    final imagefile = await coverpicker.pickImage(source: ImageSource.gallery);
+    // print("ProfileImageLoadingState");
+    final imagefile =
+        await profilepicker.pickImage(source: ImageSource.gallery);
 
     if (imagefile != null) {
       profileImage = File(imagefile.path);
-      print("image Path is : ${profileImage}");
-      uploadProfileImage();
+      // print("image Path is : ${profileImage}");
+      uploadProfileImage(name: name, bio: bio, phone: phone);
       emit(ProfileImageSuccessState());
     } else {
-      print("Not Image Selected");
+      // print("Not Image Selected");
       emit(ProfileImageErrorState());
     }
   }
 
-  String? profileImageurl;
-  Future<void> uploadProfileImage() async {
+  // String? profileImageurl;
+  Future<void> uploadProfileImage({
+    @required String? name,
+    @required String? bio,
+    @required String? phone,
+  }) async {
     final storageRef = FirebaseStorage.instance
         .ref()
         .child("images/${Uri.file(profileImage!.path).pathSegments.last}")
         .putFile(profileImage!)
         .then((value) {
-      print("${value}");
+      // print("${value}");
       value.ref.getDownloadURL().then((value) {
-        print("getDownloadURLSuccess");
+        // print("getDownloadURLSuccess");
 
-        print(value);
-        profileImageurl = value;
-        print(value);
+        // print(value);
+        UpdateUserData(name: name, bio: bio, phone: phone, prfileImage: value);
+        // profileImageurl = value;
+        // print(value);
       }).catchError((Error) {
-        print("getDownloadURLError ${Error}");
+        // print("getDownloadURLError ${Error}");
       });
     }).catchError((Error) {
-      print("uploadProfileImage ${Error}");
+      // print("uploadProfileImage ${Error}");
     });
+  }
+
+  String? coverImageurl;
+  Future<void> uploadCoverImage({
+    @required String? name,
+    @required String? bio,
+    @required String? phone,
+  }) async {
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child("images/${Uri.file(coverImage!.path).pathSegments.last}")
+        .putFile(coverImage!)
+        .then((value) {
+      // print("${value}");
+      value.ref.getDownloadURL().then((value) {
+        // print("getDownloadURLSuccess");
+
+        // print(value);
+        UpdateUserData(name: name, bio: bio, phone: phone, coverImage: value);
+
+        // coverImageurl = value;
+        // print(value);
+      }).catchError((Error) {
+        // print("getDownloadURLError ${Error}");
+      });
+    }).catchError((Error) {
+      // print("uploadcoverImage ${Error}");
+    });
+  }
+
+  void UpdateUserData({
+    @required String? name,
+    @required String? bio,
+    @required String? phone,
+    @required String? coverImage,
+    @required String? prfileImage,
+  }) {
+    emit(UpdateUserDataLoadingState());
+    UserModel model = UserModel(
+      name: name ?? userModel!.name,
+      bio: bio ?? userModel!.bio,
+      email: userModel!.email,
+      image: prfileImage ?? userModel!.image,
+      cover: coverImage ?? userModel!.cover,
+      id: userModel!.id,
+      isVerification: false,
+      phone: phone ?? userModel!.phone,
+    );
+    FirebaseFirestore.instance
+        .collection("User")
+        .doc(uid)
+        .update(
+          model.toMap(),
+        )
+        .then((value) {
+      getUserData();
+      emit(UpdateUserDataSuccessState());
+    }).catchError((Erorr) {
+      // print("UpdateUserDataErrorState");
+      emit(UpdateUserDataErrorState());
+    });
+  }
+
+// File? pi;
+
+//   Future getImagePost() async {
+//     emit(GetPostImageLoadingState());
+//     // print("CoverImageLoadingState");
+//     final imagefile = await picker.pickImage(source: ImageSource.gallery);
+
+//     if (imagefile != null) {
+//       pi = File(imagefile.path);
+//       emit(GetPostImageSuccessState());
+//     } else {
+//       // print("Not Image Selected");
+//       emit(GetPostImageErrorState());
+//     }
+//   }
+  File? postImage;
+  Future getPostImage() async {
+    emit(GetPostImageLoadingState());
+    final imagee = await picker.pickImage(source: ImageSource.gallery);
+
+    if (imagee != null) {
+      postImage = File(imagee.path);
+      emit(GetPostImageSuccessState());
+    } else {
+      print("Not Image Selected");
+      emit(GetPostImageErrorState());
+    }
+  }
+
+  String? postImageurl;
+  Future<void> uploadPostImage({
+    @required String? time,
+    @required String? text,
+  }) async {
+    emit(UploadPostLoadingState());
+    print("UploadPostLoadingState");
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child("images/${Uri.file(postImage!.path).pathSegments.last}")
+        .putFile(postImage!)
+        .then((value) {
+      // print("${value}");
+      value.ref.getDownloadURL().then((value) {
+        postImageurl = value;
+        creatPost(time: time, text: text, pImage: value);
+        emit(UploadPostSuccessState());
+        print("UploadPostSuccessState");
+      }).catchError((Error) {
+        emit(UploadPostErrorState());
+        print("UploadPostErrorState ${Error}");
+      });
+    }).catchError((Error) {
+      emit(UploadPostErrorState());
+      print("UploadPostErrorState ${Error}");
+    });
+  }
+
+  String? postId;
+  void creatPost({
+    @required String? time,
+    @required String? text,
+    String? pImage,
+  }) {
+    emit(CreatPostLoadingState());
+    print("CreatPostLoadingState");
+    PostModel postModel = PostModel(
+      name: userModel!.name,
+      uid: userModel!.id,
+      image: userModel!.image,
+      time: time,
+      text: text,
+      postImage: pImage ?? "",
+    );
+    // print(userModel!.id);
+    FirebaseFirestore.instance
+        .collection("User")
+        .doc(userModel!.id)
+        .collection("Post")
+        .add(postModel.toMap())
+        .then((value) {
+      print("CreatPostSuccessState");
+      print(value.id);
+      postId = value.id;
+      emit(CreatPostSuccessState());
+    }).catchError((Error) {
+      print("CreatPostSuccessState..${Error}");
+      emit(CreatPostErrorState());
+    });
+  }
+
+  PostModel? postModel;
+  void getPostData() {
+    emit(GetPostLoadingState());
+    print("GetPostLoadingState");
+    FirebaseFirestore.instance
+        .collection("User")
+        .doc(uid)
+        .collection("Post")
+        .doc(postId)
+        .get()
+        .then((value) {
+      postModel = PostModel.fromJson(value.data()!);
+      print("GetPostSuccessState ${postModel!.text}");
+      print(postId);
+      emit(GetPostSuccessState());
+    }).catchError((Error) {
+      print("GetPostErrorState ${Error.toString()}");
+      emit(GetPostErrorState());
+    });
+  }
+
+  void removePostImage() {
+    postImage = null;
+    emit(RemovePostImageState());
   }
 }

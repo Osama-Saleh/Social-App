@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:chat_app/Screens/postscreen.dart';
 import 'package:chat_app/cubit/home_cubit.dart';
 import 'package:chat_app/cubit/home_states.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,18 +18,27 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is CreatePostState) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostScreen(),
+              ));
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              title: Text(
-                HomeCubit.get(context)
-                    .titels[HomeCubit.get(context).currentIndex],
-                style: TextStyle(color: Colors.black, fontSize: 20),
-              )),
+            backgroundColor: Colors.white,
+            elevation: 0,
+            title: Text(
+              HomeCubit.get(context)
+                  .titels[HomeCubit.get(context).currentIndex],
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            ),
+          ),
           body: ConditionalBuilder(
             condition: HomeCubit.get(context).userModel != null,
             builder: (context) {
@@ -44,7 +54,7 @@ class HomeScreen extends StatelessWidget {
 
               // selectedItemColor: Colors.red,
               onTap: (Index) =>
-                  HomeCubit.get(context).changebottomNavigatBar(Index),
+                  HomeCubit.get(context).changebottomNavigatBar(Index, context),
               type: BottomNavigationBarType.shifting,
               // ignore: prefer_const_literals_to_create_immutables
               items: [
@@ -55,6 +65,10 @@ class HomeScreen extends StatelessWidget {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
                   label: 'User',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.post_add),
+                  label: 'Post',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.chat),

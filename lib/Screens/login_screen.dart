@@ -88,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               return null;
                             },
-                            label: "Email Address",
+                            label: Text("Email Address"),
                             prefixIcon: Icon(Icons.person)),
                         SizedBox(
                           height: 20,
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               if (formKey.currentState!.validate()) {}
                             },
                             obscureText: isSecret,
-                            label: "Password",
+                            label: Text("Password"),
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {

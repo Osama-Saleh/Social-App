@@ -42,4 +42,44 @@ class CoverImageSuccessState extends HomeStates {}
 
 class CoverImageErrorState extends HomeStates {}
 
+class UpdateUserDataLoadingState extends HomeStates {}
+
+class UpdateUserDataSuccessState extends HomeStates {}
+
+class UpdateUserDataErrorState extends HomeStates {}
+
 class ChangeBottomNavigatBarState extends HomeStates {}
+
+class CreatePostState extends HomeStates {}
+
+class CreatPostLoadingState extends HomeStates {}
+
+class CreatPostSuccessState extends HomeStates {}
+
+class CreatPostErrorState extends HomeStates {}
+
+class GetPostImageLoadingState extends HomeStates {}
+
+class GetPostImageSuccessState extends HomeStates {}
+
+class GetPostImageErrorState extends HomeStates {}
+
+class UploadPostLoadingState extends HomeStates {}
+
+class UploadPostSuccessState extends HomeStates {}
+
+class UploadPostErrorState extends HomeStates {}
+
+class UpdatePostImageLoadingState extends HomeStates {}
+
+class UpdatePostImageSuccessState extends HomeStates {}
+
+class UpdatePostImageErrorState extends HomeStates {}
+
+class GetPostLoadingState extends HomeStates {}
+
+class GetPostSuccessState extends HomeStates {}
+
+class GetPostErrorState extends HomeStates {}
+class RemovePostImageState extends HomeStates {}
+

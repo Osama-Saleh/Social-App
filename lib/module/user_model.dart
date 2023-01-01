@@ -47,7 +47,7 @@ class UserModel {
       id: json['id'] != null ? json['id'] as String : null,
       image: json['image'] != null ? json['image'] as String : null,
       cover: json['cover'] != null ? json['cover'] as String : null,
-      bio: json['bio'] != null ? json['bio'] as String : null,
+      bio: json['bio'] != null ? json['bio'] as String : "Wtire your bio..",
       isVerification: json['isVerification'] != null
           ? json['isVerification'] as bool
           : null,
