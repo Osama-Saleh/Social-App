@@ -47,12 +47,14 @@ class SettingScreen extends StatelessWidget {
                                     topLeft: Radius.circular(5),
                                     topRight: Radius.circular(5)),
                                 image: DecorationImage(
-                                  image:
-                                      HomeCubit.get(context).userModel!.cover ==
-                                              null
-                                          ? AssetImage("assets/chat1.png")
-                                          : FileImage(HomeCubit.get(context)
-                                              .coverImage!) as ImageProvider,
+                                  image: HomeCubit.get(context)
+                                              .userModel!
+                                              .cover ==
+                                          null
+                                      ? AssetImage("assets/chat1.png")
+                                      : NetworkImage(
+                                              "${HomeCubit.get(context).userModel!.cover}")
+                                          as ImageProvider,
                                   fit: BoxFit.fill,
                                 ),
                               ),
@@ -85,11 +87,21 @@ class SettingScreen extends StatelessWidget {
                                 child: CircleAvatar(
                                   radius: 43,
                                   backgroundImage:
+                                      //  HomeCubit.get(context)
+                                      //             .userModel!
+                                      //             .image !=
+                                      //         null
+                                      //     ? NetworkImage(
+                                      //         "${HomeCubit.get(context).userModel!.image}")
+                                      //     : AssetImage("assets/chat1.png")
+                                      //         as ImageProvider,
+
                                       HomeCubit.get(context).userModel!.image ==
                                               null
                                           ? AssetImage("assets/chat1.png")
-                                          : FileImage(HomeCubit.get(context)
-                                              .profileImage!) as ImageProvider,
+                                          : NetworkImage(
+                                                  "${HomeCubit.get(context).userModel!.image}")
+                                              as ImageProvider,
                                   child: Align(
                                     alignment: AlignmentDirectional.bottomEnd,
                                     child: CircleAvatar(

@@ -63,16 +63,16 @@ class HomeScreen extends StatelessWidget {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'User',
+                  icon: Icon(Icons.chat),
+                  label: 'Chat',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.post_add),
                   label: 'Post',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: 'Chat',
+                  icon: Icon(Icons.person),
+                  label: 'User',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.settings),

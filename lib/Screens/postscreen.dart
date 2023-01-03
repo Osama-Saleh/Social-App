@@ -3,6 +3,7 @@
 import 'package:chat_app/components/component.dart';
 import 'package:chat_app/cubit/home_cubit.dart';
 import 'package:chat_app/cubit/home_states.dart';
+import 'package:chat_app/module/post_model.dart';
 import 'package:chat_app/module/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -19,6 +20,7 @@ class PostScreen extends StatelessWidget {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) {},
       builder: (context, state) {
+        PostModel pmodel;
         return Scaffold(
             appBar: AppBar(
               title: Text("Create Post"),
@@ -31,7 +33,22 @@ class PostScreen extends StatelessWidget {
               actions: [
                 TextButton(
                     onPressed: () {
-                      if (HomeCubit.get(context).postImage == null) {
+                      // if (state is CreatPostSuccessState) {
+                      //   if (state.postModel.text == null) {
+                      //     HomeCubit.get(context).uploadPostImage(
+                      //         time: DateTime.now().toString(),
+                      //         text: postController.text);
+                      //   } else if (HomeCubit.get(context).postss == null) {
+                      //     HomeCubit.get(context).creatPost(
+                      //         time: DateTime.now().toString(),
+                      //         text: postController.text);
+                      //   } else if (state.postModel.text == null &&
+                      //       HomeCubit.get(context).postImage == null) {
+                      //     print("NO posted item");
+                      //   }
+                      // }
+                      // print("NO click");
+                      if (HomeCubit.get(context).postImage == " ") {
                         HomeCubit.get(context).creatPost(
                             time: DateTime.now().toString(),
                             text: postController.text);
@@ -132,7 +149,9 @@ class PostScreen extends StatelessWidget {
                           Expanded(
                             child: TextButton.icon(
                                 onPressed: () {
-                                  HomeCubit.get(context).getPostData();
+                                  // PostModel p = PostModel();
+                                  print(
+                                      "Demo ${HomeCubit.get(context).postImage}");
                                 },
                                 icon: Icon(Icons.tag),
                                 label: Text("Tages")),

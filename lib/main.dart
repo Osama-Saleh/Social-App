@@ -5,6 +5,7 @@ import 'package:chat_app/cash_helper/shared_preference.dart';
 import 'package:chat_app/components/component.dart';
 import 'package:chat_app/cubit/home_cubit.dart';
 import 'package:chat_app/cubit/home_states.dart';
+import 'package:chat_app/module/post_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,7 +44,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit()..getUserData(),
+      create: (context) => HomeCubit()
+        ..getUserData()
+        ..getPostData(),
       child: BlocConsumer<HomeCubit, HomeStates>(
         listener: (context, state) {},
         builder: (context, state) {
